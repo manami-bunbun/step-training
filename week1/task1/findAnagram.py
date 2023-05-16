@@ -3,20 +3,18 @@ from pathlib import Path
 
 def sortDictionary(filePath):
     original_dic = []
+    new_dic = {}
+    
     with open(filePath) as f:
         lines = f.readlines()
         for l in lines:
-            original_dic.append(l.rstrip("\n"))
-        
-    new_dic = {}
-
-    for original_word in original_dic:
-        sorted_word = "".join(sorted(original_word))
-        if sorted_word in new_dic:
-            new_dic[sorted_word].append(original_word)
-        else:
-            new_dic[sorted_word] = [ original_word ]
-
+            original_word = l.rstrip("\n")
+            sorted_word = "".join(sorted(original_word))
+            if sorted_word in new_dic:
+                new_dic[sorted_word].append(original_word)
+            else:
+                new_dic[sorted_word] = [ original_word ]
+                
     sorted_dic = dict(sorted(new_dic.items())) # sort words alphabetically
     return sorted_dic
 
@@ -52,7 +50,6 @@ def solveTask1(targeWord):
     sorted_dic = sortDictionary(words_path)
     
     # input
-  
     sorted_targetWord = "".join(sorted(targetWord))
     
     # binary search 
