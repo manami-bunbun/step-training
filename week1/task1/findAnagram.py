@@ -2,7 +2,6 @@
 from pathlib import Path
 
 def sortDictionary(filePath):
-    original_dic = []
     new_dic = {}
     
     with open(filePath) as f:
@@ -15,7 +14,7 @@ def sortDictionary(filePath):
             else:
                 new_dic[sorted_word] = [ original_word ]
                 
-    sorted_dic = dict(sorted(new_dic.items())) # sort words alphabetically
+    sorted_dic = dict(sorted(new_dic.items())) 
     return sorted_dic
 
 
