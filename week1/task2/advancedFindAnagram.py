@@ -40,10 +40,16 @@ def countCharacter(filePath):
 
 # find a highest score from sorted tupples
 def is_subset(A, count_list):
+    max_score = 0
+    best_word = None
     for word, hashmap in count_list:
         is_subset = all(A[char] >= hashmap[char] for char in hashmap)
         if is_subset:
-            return word
+            score = calculateOneWordScore(word)
+            if score > max_score:
+                max_score = score
+                best_word = word
+    return best_word
     
 
 # --------------------------------------------------------------
