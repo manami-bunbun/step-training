@@ -1,18 +1,16 @@
-
+from collections import defaultdict
 from pathlib import Path
 
 def sortDictionary(filePath):
-    new_dic = {}
+    new_dic = defaultdict(list) 
     
     with open(filePath) as f:
         lines = f.readlines()
         for l in lines:
             original_word = l.rstrip("\n")
             sorted_word = "".join(sorted(original_word))
-            if sorted_word in new_dic:
-                new_dic[sorted_word].append(original_word)
-            else:
-                new_dic[sorted_word] = [ original_word ]
+            new_dic[sorted_word].append(original_word)
+                
                 
     sorted_dic = dict(sorted(new_dic.items())) 
     return sorted_dic
@@ -37,7 +35,7 @@ def findKeyByBinarySearch(sorted_targetWord, sorted_dic):
  
     return []
    
-def solveTask1(targeWord):
+def solveTask1(targetWord):
         
     # 現在ディレクトリのパスを取得
     current_dir_path = Path(__file__).resolve().parent
@@ -55,17 +53,25 @@ def solveTask1(targeWord):
     value = findKeyByBinarySearch(sorted_targetWord, sorted_dic)
     
     if len(value) > 0:
-        print("The word can be anagram of "+ str(value))
+        return "The word can be anagram of "+ str(value)
     else:
-        print("Anagram Not Found")
+        return "Anagram Not Found"
     
-    return
+    
 
 
 if __name__ == "__main__":
   
-    # input
-    targetWord = input("英数字を入力してください: ")
+    # for normal use
+    # targetWord = input("英数字を入力してください: ")
+    # print(solveTask1(targetWord))
     
-    solveTask1(targetWord)
+    # for tests
+    print("test1:" + solveTask1(str('a'*10000000)))
+    print("test2:" + solveTask1("!@#$%^&*()"))
+    print("test3:" + solveTask1(""))
+    print("test4:" + solveTask1(" "))
+    print("test5:" + solveTask1("alepp"))
+    
+    
    
