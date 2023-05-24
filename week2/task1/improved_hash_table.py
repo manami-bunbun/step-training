@@ -19,8 +19,7 @@ def calculate_hash(key):
     # Note: This is not a good hash function. Do you see why?
     hash = 0
     for i in range(len(key)):
-        hash = ((hash << 5) + hash) ^ ord(key[i])
-        hash &= 0x7FFFFFFF
+        hash = hash*17+ord(key[i])
     return hash 
 
 
@@ -78,6 +77,7 @@ class HashTable:
         new_item = Item(key, value, self.buckets[bucket_index])
         self.buckets[bucket_index] = new_item
         self.item_count += 1
+        self.rehashOrLeave()
         return True
 
     # Get an item from the hash table.
@@ -117,6 +117,7 @@ class HashTable:
                 else:
                     self.buckets[bucket_index] = item.next
                 self.item_count -= 1
+                self.rehashOrLeave()
                 return True
             prev = item
             item = item.next
@@ -126,6 +127,13 @@ class HashTable:
     def size(self):
         return self.item_count
     
+    def reappend(self, item):
+        bucket_index = calculate_hash(item.key) % self.bucket_size
+        new_item = Item(item.key, item.value, self.buckets[bucket_index])  
+        self.buckets[bucket_index] = new_item
+        self.item_count += 1
+        return
+    
     
     def makeRehashTable(self, new_size):
     
@@ -134,12 +142,12 @@ class HashTable:
             
         for item in prev_hashTable:
             while item:
-                new_hashTable.put(item.key, item.value)
+                new_hashTable.reappend(item)
                 item = item.next
         
         self.bucket_size = new_hashTable.bucket_size
         self.buckets = new_hashTable.buckets
-        # self.item_count = new_hashTable.item_count 
+        self.item_count = new_hashTable.item_count 
         
         return
     
@@ -148,11 +156,11 @@ class HashTable:
         sizeRate = self.item_count / self.bucket_size
         
         if 0.3 > sizeRate:
-            new_size = self.bucket_size // 2
+            new_size = self.bucket_size // 2 +1
             self.makeRehashTable(new_size)
             
         elif sizeRate > 0.7:
-            new_size = self.bucket_size * 2
+            new_size = self.bucket_size * 2 +1 
             self.makeRehashTable(new_size)
             
         return
@@ -285,7 +293,7 @@ def plot_data(x, y):
     plt.show()
     
 def save_to_csv(iteration, duration):
-    with open('rehash-functionChange.csv', 'a', newline='') as file:
+    with open('rehash-withNewHash.csv', 'a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([iteration, duration])
 

@@ -1,3 +1,4 @@
+import csv
 import random, sys, time
 import matplotlib.pyplot as plt
 ###########################################################################
@@ -220,6 +221,7 @@ def performance_test():
             rand = random.randint(0, 100000000)
             hash_table.get(str(rand))
         end = time.time()
+        save_to_csv(iteration, end - begin)
         x_values.append(iteration)
         y_values.append(y_values)
         print("%d %.6f" % (iteration, end - begin))
@@ -242,7 +244,10 @@ def plot_data(x, y):
     plt.title('the performance of the hash table')
     plt.show()
 
-
+def save_to_csv(iteration, duration):
+    with open('initialHash.csv', 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([iteration, duration])
 
 if __name__ == "__main__":
     functional_test()
