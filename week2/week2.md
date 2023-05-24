@@ -1,5 +1,14 @@
 # Week2
 
+## 質問
+
+task1　これ以上速くなる方法がわからない
+
+task2 ちょっとわからない
+
+task3 Javaではできたがpythonで書き直すのに詰まっている(selfの良さがわからない)
+
+
 ## Task1 : Imprement Hash Table 
 
 ### Step1 : Implement `delete()` function 
@@ -213,3 +222,10 @@ def calculate_hash(key):
 
 ## Task2 
  
+ take a look at week2/task2/
+
+
+ ## Task3
+
+ Java was implemented
+ Python not yet
