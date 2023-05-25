@@ -1,13 +1,11 @@
 # Week2
 
-## 質問
-
-task1　これ以上速くなる方法がわからない
-
-task2 ちょっとわからない
+## 自分で宿題外で調べたこと
 
 task3 Javaではできたがpythonで書き直すのに詰まっている(selfの良さがわからない)
 
+* [Code For Python](https://codor.co.jp/python/reason-to-use-self)
+* 
 
 ## Task1 : Imprement Hash Table 
 
