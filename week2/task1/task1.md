@@ -87,11 +87,10 @@ def calculate_hash(key):
 -> step3の後にまた変更
 
 
+
 ## Step3 : Implement rehashing
 
-**Code** 
-
-[improved_hash_table.py](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/improved_hash_table.py)
+**Code** : [improved_hash_table.py](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/improved_hash_table.py)
 
 
 [x] Implement `plot()` functions to see if the performance imploves for future implementations
@@ -127,6 +126,7 @@ def calculate_hash(key):
             
         return
 ```
+
 
 
 ## Step4 : Analysis & Improve 
