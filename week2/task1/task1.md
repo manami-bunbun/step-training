@@ -131,16 +131,18 @@ def calculate_hash(key):
 
 ## Step4 : Analysis & Improve 
 
-[Data](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/ComparisonData)
+
+csvやグラフのplot -> [Data](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/ComparisonData)
 
 ![Step3のreHash前後の比較](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/ComparisonOfHashTable.png)
 
--> rehashは機能している
+    -> rehashは機能している
 
 
-**hashの計算の仕方**
-`hash += ord(key[i]) * i`だと、偶数になるなど衝突の可能性がまだ高い
--> `hash = hash*[素数]+ord(key[i])` にしてみた
+### hashの計算の仕方
+    `hash += ord(key[i]) * i`だと、偶数になるなど衝突の可能性がまだ高い
+    -> `hash = hash*[素数]+ord(key[i])` にしてみた
+
 
 ![Step4のfunction関数比較](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/ComparisonOfHashFunction.png)
 
