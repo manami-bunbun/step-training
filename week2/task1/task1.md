@@ -12,7 +12,7 @@
 ## 回答
 
 
-最終的なコード: [improved_hash_table.py](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/improved_hash_table.py)
+**最終的なコード** : [improved_hash_table.py](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/improved_hash_table.py)
 
 * [Step1 : Implement `delete()` function](#step1--implement-delete-function)
 * [Step2 :Improve Hash function](#step2-improve-hash-function)
