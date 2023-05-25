@@ -6,13 +6,27 @@
 
 ## Java
 
-```
-Node.java - Node class
-URLCache.java - Cache implemented
-TestURLCache.java - for tests (run this file!) 
-```
+[Node.java]() - Node class
+
+[URLCache.java]() - Cache implemented
+
+[TestURLCache.java]() - for tests (run this file!) 
+
 
 ### URLCache.java
 
 * Double Linked list for the order 
 * HashTable for to map url and page
+
+## Python
+
+[node.py](https://github.com/manami-bunbun/step-training/blob/main/week2/task3/python/node.py) - Node class
+
+[URLCache.py](https://github.com/manami-bunbun/step-training/blob/main/week2/task3/python/URLCache.py) - Cache implemented
+
+[TestURLCahchs.py](https://github.com/manami-bunbun/step-training/blob/main/week2/task3/python/TestURLCache.py) - for tests (run this file!)
+ 
+## その他
+task3 Javaではできたがpythonで書き直すのに詰まっている(selfの良さがわからない)
+
+* [Code For Python](https://codor.co.jp/python/reason-to-use-self)
