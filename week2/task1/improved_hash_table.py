@@ -19,7 +19,7 @@ def calculate_hash(key):
     # Note: This is not a good hash function. Do you see why?
     hash = 0
     for i in range(len(key)):
-        hash = hash*17+ord(key[i])
+        hash = hash*29+ord(key[i])
     return hash 
 
 
@@ -293,7 +293,7 @@ def plot_data(x, y):
     plt.show()
     
 def save_to_csv(iteration, duration):
-    with open('rehash-withNewHash.csv', 'a', newline='') as file:
+    with open('29timesHash.csv', 'a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([iteration, duration])
 

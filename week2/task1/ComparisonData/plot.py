@@ -20,28 +20,39 @@ def calculate_approximation(x, y):
     return polynomial
 
 
-def plot_data_with_approximation(x, y, polynomial, name, color):
-    plt.scatter(x, y, color=color, label=name)
-    plt.plot(x, polynomial(x), color=color)
+def plot_data_with_approximation(x, y, name, color):
+    # change as you like
+    plt.plot(x, y, color=color, label=name)
+    # plt.scatter(x, y, color=color, label=name)
+    # plt.plot(x, polynomial(x), color=color)
     plt.xlabel('iteration')
     plt.ylabel('time')
-    plt.title('Comparison of the performance of the hash table')
+    plt.title('Comparison of the hash function')
     plt.legend()
+    
+def drawGraphfromCSV(filename, name, color):
+    x, y = read_data_from_csv(filename)
+    # polynomial = calculate_approximation(x, y)
+    plot_data_with_approximation(x, y, name, color)
 
 if __name__ == "__main__":
 
-    filename1 = 'initial_hash_table.csv'
-    filename2 = 'initial-hash_table.csv'
-    x1, y1 = read_data_from_csv(filename1)
-    x2, y2 = read_data_from_csv(filename2)
-
-
-    polynomial1 = calculate_approximation(x1, y1)
-    polynomial2 = calculate_approximation(x2, y2)
-
-
-    plot_data_with_approximation(x1, y1, polynomial1, 'initial_hash_table.py(sample code)', 'red')
-    plot_data_with_approximation(x2, y2, polynomial2,'improved_hash_table.py(with Rehashing/new hash calculation)', 'blue')
-
+    #change
+    fileList = ['3timesHash.csv',
+                '17timesHash.csv',
+                '29timesHash.csv',
+                '43timesHash.csv',
+                '97timesHash.csv',
+                '499timesHash.csv']
+  
+    color = ['red', 'blue', 'green', 'yellow', 'black', 'pink']
+    i=0
+    
+    # change 
+    dir = '/Users/manami/22:23/step2023/step-training/week2/task1/ComparisonData/'
+    
+    for file in fileList:
+        drawGraphfromCSV(dir+file, file, color[i])
+        i+=1
 
     plt.show()
