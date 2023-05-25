@@ -1,30 +1,30 @@
-## Task1 : Imprement Hash Table 
+# Task1 : Imprement Hash Table 
 
 > Implement a hash table from scratch
 > "Implement Python's dictionary from scratch" :)
-
 > Hint 1: Implement delete(key)
 > Hint 2: Implement rehashing
 > Hint 3: Improve the hash function
 > Your goal is to make the hash table work with mostly O(1) without depending on the number of items in the hash table
 
 
-### 回答
 
-[improved_hash_table.py]()
+## 回答
 
-* Step1 : Implement `delete()` function (#step1)
-* Step2 :Improve Hash function (#step2)
-* Step3 : Implement rehashing (#step3)
-* Step4 : Analysis & Improve (#step4)
+[improved_hash_table.py](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/improved_hash_table.py)
+
+* [Step1 : Implement `delete()` function](#step1--implement-delete-function)
+* [Step2 :Improve Hash function](#step2-improve-hash-function)
+* [Step3 : Implement rehashing](#step3--implement-rehashing)
+* [Step4 : Analysis & Improve](#step4--analysis--improve)
+
+---
 
 
+## Step1 : Implement `delete()` function 
 
-### Step1 : Implement `delete()` function 
+**Code**  [initial_hash_table.py(sample code + delete())](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/initial_hash_table.py)
 
-**Code** 
-
-[initial_hash_table.py(sample code + delete())]()
 
 
 [x] Implement `delete()` function in [sample code](https://github.com/xharaken/step2/blob/master/hash_table.py)
@@ -58,7 +58,7 @@ At this point, the performance is showen in the table below.
 ```
 
 
-### Step2 :Improve Hash function
+## Step2 :Improve Hash function
 
 
 ```python
@@ -86,11 +86,11 @@ def calculate_hash(key):
 -> step3の後にまた変更
 
 
-### Step3 : Implement rehashing
+## Step3 : Implement rehashing
 
 **Code** 
 
-[improved_hash_table.py]()
+[improved_hash_table.py](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/improved_hash_table.py)
 
 
 [x] Implement `plot()` functions to see if the performance imploves for future implementations
@@ -128,9 +128,11 @@ def calculate_hash(key):
 ```
 
 
-### Step4 : Analysis & Improve 
+## Step4 : Analysis & Improve 
 
-![Step3のreHash前後の比較](week2/task1/ComparisonOfHashTable.png)
+[Data](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/ComparisonData)
+
+![Step3のreHash前後の比較](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/ComparisonOfHashTable.png)
 
 -> rehashは機能している
 
@@ -139,7 +141,7 @@ def calculate_hash(key):
 `hash += ord(key[i]) * i`だと、偶数になるなど衝突の可能性がまだ高い
 -> `hash = hash*[素数]+ord(key[i])` にしてみた
 
-![Step4のfunction関数比較](week2/task1/ComparisonOfHashFunction.png)
+![Step4のfunction関数比較](https://github.com/manami-bunbun/step-training/blob/main/week2/task1/ComparisonOfHashFunction.png)
 
 
 ```text
