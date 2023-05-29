@@ -58,13 +58,51 @@ def tokenize(line):
             (token, index) = read_multiple(line, index)
         elif line[index] == '/':
             (token, index) = read_devide(line, index)
+        elif line[index] == '(':
+            (token, index) = read_Lbrackets(line, index)
+        elif line[index] == ')':
+            (token, index) = read_Rbrackets(line, index)
         else:
             print('Invalid character found: ' + line[index])
             exit(1)
         tokens.append(token)
     return tokens
 
+# find brackets indices
+def findBrackets(tokens):
+    index = 0
+    Lbracket_indices =[]
+    Rbracket_indices = []
+    while index < len(tokens):
+        if tokens[index]['type'] == 'Lbracket':
+            Lbracket_indices.append(index)
+        elif tokens[index]['type'] == 'Rbracket':
+            Rbracket_indices.append(index)
+        index += 1
+    return Lbracket_indices, Rbracket_indices
 
+# calcurate by brackets (remove brackets)
+def calculateByBrackets(tokens, Lbracket_indices, Rbracket_indices):
+    if len(Lbracket_indices) != len(Rbracket_indices):
+        print('Invalid brackets')
+        exit(1)
+    
+    if(len(Lbracket_indices) == 0):
+        return tokens
+        
+    index = 0
+    n = len(tokens)
+    while index < len(Lbracket_indices):
+        start = Lbracket_indices[len(Lbracket_indices)-index-1]
+        end = Rbracket_indices[index]
+        tmp = evaluate(tokens[start+1:end])
+        tokens[start] = {'type': 'NUMBER', 'number': tmp}
+        tokens = tokens[0: start-1] + tokens[end+1:n]
+        index += 1
+    return tokens
+    
+ 
+# evaluate * or / first and then + or -   
 def evaluate(tokens):
     # evaluate * or /
     tokens.insert(0, {'type': 'PLUS'}) # Insert a dummy '+' token
@@ -85,8 +123,7 @@ def evaluate(tokens):
             exit(1)
         index += 2
     newTokens.append( {'type': 'NUMBER', 'number': tmp})
-    
-    
+
     # evaluate + or -
     answer = 0
     index = 1
@@ -102,10 +139,18 @@ def evaluate(tokens):
         index += 1
     return answer
 
+#  gather all functions
+def calculator(line):
+    tokens = tokenize(line)
+    Lbrackets_indices, Rbrackets_indices = findBrackets(tokens) 
+    newTokens = calculateByBrackets(tokens, Lbrackets_indices, Rbrackets_indices)
+    answer = evaluate(newTokens)
+    return answer
+
+# ------------------------test------------------------
 
 def test(line):
-    tokens = tokenize(line)
-    actual_answer = evaluate(tokens)
+    actual_answer = calculator(line)
     expected_answer = eval(line)
     if abs(actual_answer - expected_answer) < 1e-8:
         print("PASS! (%s = %f)" % (line, expected_answer))
@@ -122,11 +167,13 @@ def run_test():
     test("1.0+2.1/3+1")
     print("==== Test finished! ====\n")
 
-run_test()
+# ------------------------------------------------------
 
-while True:
-    print('> ', end="")
-    line = input()
-    tokens = tokenize(line)
-    answer = evaluate(tokens)
-    print("answer = %f\n" % answer)
+if __name__ == '__main__':
+    run_test()
+
+    while True:
+        print('> ', end="")
+        line = input()
+        answer = calculator(line)
+        print("answer = %f\n" % answer)
