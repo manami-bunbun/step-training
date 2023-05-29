@@ -1,6 +1,7 @@
 package java;
 import java.util.HashMap;
 
+// LRU(Least Recently Used)
 public class URLCache {
     private final int capacity;
     private HashMap<String, Node> map;
