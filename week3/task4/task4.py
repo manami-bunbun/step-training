@@ -44,21 +44,21 @@ def read_Lbrackets(line, index):
     return token, index + 1
 
 def read_abs(line, index):
-    if line[index:index+2] != 'abs':
+    if line[index:index+3] != 'abs':
         print('Invalid syntax')
         exit(1)
     token = {'type': 'ABS'}
     return token, index + 3
 
 def read_int(line, index):
-    if line[index:index+2] != 'int':
+    if line[index:index+3] != 'int':
         print('Invalid syntax')
         exit(1)
     token = {'type': 'INT'}
     return token, index + 3
 
 def read_round(line, index):
-    if line[index:index+4] != 'round':
+    if line[index:index+5] != 'round':
         print('Invalid syntax')
         exit(1)
     token = {'type': 'ROUND'}
@@ -83,60 +83,50 @@ def tokenize(line):
             (token, index) = read_Lbrackets(line, index)
         elif line[index] == ')':
             (token, index) = read_Rbrackets(line, index)
+        elif line[index] == 'a':
+            (token, index) = read_abs(line, index)
+        elif line[index] == 'i':
+            (token, index) = read_int(line, index)
+        elif line[index] == 'r':
+            (token, index) = read_round(line, index)    
         else:
             print('Invalid character found: ' + line[index])
             exit(1)
         tokens.append(token)
     return tokens
 
-# find brackets indices
-def findBrackets(tokens):
-    index = 0
-    Lbracket_indices =[]
-    Rbracket_indices = []
-    while index < len(tokens):
-        if tokens[index]['type'] == 'Lbracket':
-            Lbracket_indices.append(index)
-        elif tokens[index]['type'] == 'Rbracket':
-            Rbracket_indices.append(index)
-        index += 1
-    return Lbracket_indices, Rbracket_indices
 
 # calcurate by brackets (remove brackets)
-def calculateByBrackets(tokens, Lbracket_indices, Rbracket_indices):
-    if len(Lbracket_indices) != len(Rbracket_indices):
-        print('Invalid brackets')
-        exit(1)
-    
-    if(len(Lbracket_indices) == 0):
-        return tokens
-        
+def calculateInsideBrackets(tokens):
     index = 0
-    n = len(tokens)
-    while index < len(Lbracket_indices):
-        start = Lbracket_indices[len(Lbracket_indices)-index-1]
-        end = Rbracket_indices[index]
-        tmp = evaluate(tokens[start+1:end])
-        tokens[start] = {'type': 'NUMBER', 'number': tmp}
-        tokens = tokens[0: start-1] + tokens[end+1:n]
+    stack = []
+    while index < len(tokens):
+        if tokens[index]['type'] == 'Rbrackets':
+            inside_brackets =[]
+            while stack[-1]['type'] != 'Lbrackets':
+                inside_brackets = [stack.pop()] + inside_brackets
+            stack.pop() # remove '('
+            withoutBrackets = evaluate(inside_brackets)
+            if stack[-1]['type'] == 'ABS' or stack[-1]['type'] == 'INT' or stack[-1]['type'] == 'ROUND':
+                withoutBrackets = calculateByAbsIntRound(withoutBrackets, stack[-1]['type'])
+                stack.pop()
+            stack.append({'type': 'NUMBER', 'number': withoutBrackets})
+        else:
+            stack.append(tokens[index])
         index += 1
-    return tokens
+    return stack
 
 # calculate by abs or int or round
-def calculateByAbsIntRound(tokens):
-    index = 0
-    while index < len(tokens):
-        if tokens[index]['type'] == 'ABS':
-            tokens[index] = {'type': 'NUMBER', 'number': abs(tokens[index+1]['number'])}
-            tokens = tokens[0: index+1] + tokens[index+2:len(tokens)]
-        elif tokens[index]['type'] == 'INT':
-            tokens[index] = {'type': 'NUMBER', 'number': int(tokens[index+1]['number'])}
-            tokens = tokens[0: index+1] + tokens[index+2:len(tokens)]
-        elif tokens[index]['type'] == 'ROUND':
-            tokens[index] = {'type': 'NUMBER', 'number': round(tokens[index+1]['number'])}
-            tokens = tokens[0: index+1] + tokens[index+2:len(tokens)]
-        index += 1
-    return tokens 
+def calculateByAbsIntRound(withoutBrackets, type):
+    if type == 'ABS':
+        return abs(withoutBrackets)
+    elif type == 'INT':
+        return int(withoutBrackets)
+    elif type == 'ROUND':
+        return round(withoutBrackets)
+    else:
+        print('Invalid syntax')
+        exit(1)
  
 # evaluate * or / first and then + or -   
 def evaluate(tokens):
@@ -178,10 +168,8 @@ def evaluate(tokens):
 #  gather all functions
 def calculator(line):
     tokens = tokenize(line)
-    Lbrackets_indices, Rbrackets_indices = findBrackets(tokens) 
-    tokensWithoutBrackets = calculateByBrackets(tokens, Lbrackets_indices, Rbrackets_indices)
-    tokensWithoutAbsIntRound = calculateByAbsIntRound(tokensWithoutBrackets)
-    answer = evaluate(tokensWithoutAbsIntRound)
+    tokensWithoutBrackets = calculateInsideBrackets(tokens)
+    answer = evaluate(tokensWithoutBrackets)
     return answer
 
 # ------------------------test------------------------
@@ -202,6 +190,8 @@ def run_test():
     test("1.0+2.1-3")
     test("1+2*3+1")
     test("1.0+2.1/3+1")
+    test("abs((1.0)+(2.1))/3+1")
+    test("int(abs((1.0)+(2.1))/3)+1")
     print("==== Test finished! ====\n")
 
 # ------------------------------------------------------
