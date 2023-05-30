@@ -68,44 +68,23 @@ def tokenize(line):
         tokens.append(token)
     return tokens
 
-# find brackets indices
-def findBrackets(tokens):
-    index = 0
-    Lbracket_indices =[]
-    Rbracket_indices = []
-    while index < len(tokens):
-        if tokens[index]['type'] == 'Lbracket':
-            Lbracket_indices.append(index)
-        elif tokens[index]['type'] == 'Rbracket':
-            Rbracket_indices.append(index)
-        index += 1
-    return Lbracket_indices, Rbracket_indices
 
-# calcurate by brackets (remove brackets)
-def calculateByBrackets(tokens, Lbracket_indices, Rbracket_indices):
-    if len(Lbracket_indices) != len(Rbracket_indices):
-        print('Invalid brackets')
-        exit(1)
-    
-    if(len(Lbracket_indices) == 0):
-        return tokens
-        
+def calculateInsideBrackets(tokens):
     index = 0
-    n = len(tokens)
-    while index < len(Lbracket_indices):
-        start = Lbracket_indices[len(Lbracket_indices)-index-1]
-        end = Rbracket_indices[index]
-        tmp = evaluate(tokens[start+1:end])
-        tokens[start] = {'type': 'NUMBER', 'number': tmp}
-        tokens = tokens[0: start-1] + tokens[end+1:n]
+    stack = []
+    while index < len(tokens):
+        if tokens[index]['type'] == 'Rbrackets':
+            inside_brackets =[]
+            while stack[-1]['type'] != 'Lbrackets':
+                inside_brackets = [stack.pop()] + inside_brackets
+            stack.pop() # remove '('
+            stack.append({'type': 'NUMBER', 'number': evaluate(inside_brackets)})
+        else:
+            stack.append(tokens[index])
         index += 1
-    
-    check = 0
-    while check < len(tokens) and tokens[check][type]==('Lbracket' or 'Rbracket'):
-        check += 1
-    tokens = tokens[check:len(tokens)-1]
-    return tokens
-    
+    return stack
+
+
  
 # evaluate * or / first and then + or -   
 def evaluate(tokens):
@@ -149,8 +128,7 @@ def evaluate(tokens):
 #  gather all functions
 def calculator(line):
     tokens = tokenize(line)
-    Lbrackets_indices, Rbrackets_indices = findBrackets(tokens) 
-    newTokens = calculateByBrackets(tokens, Lbrackets_indices, Rbrackets_indices)
+    newTokens = calculateInsideBrackets(tokens) 
     answer = evaluate(newTokens)
     return answer
 
