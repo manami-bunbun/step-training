@@ -89,7 +89,6 @@ def calculateInsideBrackets(tokens):
 # evaluate * or / first and then + or -   
 def evaluate(tokens):
     # evaluate * or /
-    print(tokens)
     tokens.insert(0, {'type': 'PLUS'}) # Insert a dummy '+' token
     tmp = tokens[1]['number'] 
     index = 2
@@ -103,6 +102,9 @@ def evaluate(tokens):
         elif tokens[index]['type'] == 'MULTIPLE':
             tmp *= tokens[index+1]['number']
         elif tokens[index]['type'] == 'DEVIDE':
+            if tokens[index+1]['number'] == 0:
+                print('ZeroDivisionError')
+                exit(1)
             tmp /= tokens[index+1]['number']    
         else:
             print('Invalid syntax')
@@ -146,11 +148,12 @@ def test(line):
 # Add more tests to this function :)
 def run_test():
     print("==== Test started! ====")
-    test("1+2")
+    test("10/3")
     test("1.0+2.1-3")
     test("1+2*3+1")
-    test("1.0+2.1/3+1")
+    test("(1+2)*(3+4)/(5+6)")
     test("(1.0+2.1)/3+1")
+    test("10/0")
     print("==== Test finished! ====\n")
 
 # ------------------------------------------------------

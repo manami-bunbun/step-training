@@ -74,6 +74,9 @@ def evaluate(tokens):
         elif tokens[index]['type'] == 'MULTIPLE':
             tmp *= tokens[index+1]['number']
         elif tokens[index]['type'] == 'DEVIDE':
+            if tokens[index+1]['number'] == 0:
+                print('ZeroDivisionError')
+                exit(1)
             tmp /= tokens[index+1]['number']    
         else:
             print('Invalid syntax')

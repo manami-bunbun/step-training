@@ -1,7 +1,12 @@
 #! /usr/bin/python3
 
-def read_number(line, index):
+def remove_spaces(string):
+    return string.replace(" ", "")
+
+def read_number(line, index, minus=False):
     number = 0
+    if minus:
+        index +=1
     while index < len(line) and line[index].isdigit():
         number = number * 10 + int(line[index])
         index += 1
@@ -12,6 +17,8 @@ def read_number(line, index):
             number += int(line[index]) * decimal
             decimal /= 10
             index += 1
+    if minus:
+        number *= -1
     token = {'type': 'NUMBER', 'number': number}
     return token, index
 
@@ -73,6 +80,8 @@ def tokenize(line):
             (token, index) = read_number(line, index)
         elif line[index] == '+':
             (token, index) = read_plus(line, index)
+        elif line[index] == '-' and line[index-1]=='(':
+            (token, index) = read_number(line, index, minus=True)
         elif line[index] == '-':
             (token, index) = read_minus(line, index)
         elif line[index] == '*':
@@ -107,9 +116,10 @@ def calculateInsideBrackets(tokens):
                 inside_brackets = [stack.pop()] + inside_brackets
             stack.pop() # remove '('
             withoutBrackets = evaluate(inside_brackets)
-            if stack[-1]['type'] == 'ABS' or stack[-1]['type'] == 'INT' or stack[-1]['type'] == 'ROUND':
-                withoutBrackets = calculateByAbsIntRound(withoutBrackets, stack[-1]['type'])
-                stack.pop()
+            #最初にabsやintやroundがあったら計算できるように
+            while len(stack)>0 and (stack[-1]['type'] == 'ABS' or stack[-1]['type'] == 'INT' or stack[-1]['type'] == 'ROUND'):
+                operation = stack.pop()['type']
+                withoutBrackets = calculateByAbsIntRound(withoutBrackets, operation)
             stack.append({'type': 'NUMBER', 'number': withoutBrackets})
         else:
             stack.append(tokens[index])
@@ -130,9 +140,18 @@ def calculateByAbsIntRound(withoutBrackets, type):
  
 # evaluate * or / first and then + or -   
 def evaluate(tokens):
-    # evaluate * or /
+    if (len(tokens) == 1):
+        return tokens[0]['number']
+        
+    # evaluate * or /　(記号を中心にその左右の数字を計算するか判断)
     tokens.insert(0, {'type': 'PLUS'}) # Insert a dummy '+' token
-    tmp = tokens[1]['number'] 
+    
+    # 最初の数字を一時保存する
+    p = 1
+    while tokens[p]['type']!="NUMBER":
+        p+=1        
+    tmp = tokens[p]['number'] 
+    
     index = 2
     newTokens = [{'type': 'PLUS'}]
     while index < len(tokens):
@@ -143,14 +162,20 @@ def evaluate(tokens):
         elif tokens[index]['type'] == 'MULTIPLE':
             tmp *= tokens[index+1]['number']
         elif tokens[index]['type'] == 'DEVIDE':
+            if tokens[index+1]['number'] == 0:
+                print('-----------ZeroDivisionError------------')
+                print('Wanna know why? see https://en.wikipedia.org/wiki/Division_by_zero')
+                exit(1)
             tmp /= tokens[index+1]['number']    
+        elif tokens[index]['type'] == 'NUMBER':
+            pass
         else:
-            print('Invalid syntax')
+            print('Invalid syntax:' + str(tokens[index]))
             exit(1)
         index += 2
     newTokens.append( {'type': 'NUMBER', 'number': tmp})
 
-    # evaluate + or -
+    # evaluate + or -　(数字中心)
     answer = 0
     index = 1
     while index < len(newTokens):
@@ -167,7 +192,8 @@ def evaluate(tokens):
 
 #  gather all functions
 def calculator(line):
-    tokens = tokenize(line)
+    lineWithoutSpaces=remove_spaces(line)
+    tokens = tokenize(lineWithoutSpaces)
     tokensWithoutBrackets = calculateInsideBrackets(tokens)
     answer = evaluate(tokensWithoutBrackets)
     return answer
@@ -190,8 +216,14 @@ def run_test():
     test("1.0+2.1-3")
     test("1+2*3+1")
     test("1.0+2.1/3+1")
+    test("abs(-5)")  
+    test("int(3.8)")  
+    test("round(3.14159)") 
     test("abs((1.0)+(2.1))/3+1")
     test("int(abs((1.0)+(2.1))/3)+1")
+    test("3*abs(4)+int(5.6)/round(2.3)") 
+    test("(2+int(3.7))*round(1.8+0.2)-abs(4.5)")
+    test("4/0") 
     print("==== Test finished! ====\n")
 
 # ------------------------------------------------------
