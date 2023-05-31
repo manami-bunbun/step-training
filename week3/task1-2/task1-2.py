@@ -114,8 +114,10 @@ def run_test():
     print("==== Test started! ====")
     test("1+2")
     test("1.0+2.1-3")
-    test("1+2*3+1")
+    test("1+2*3+1") 
+    test("1+2*3+1.3+5+6*2.0")
     test("1.0+2.1/3+1")
+    test("1.0+2.1/4+1/3+5+6*2.0")
     print("==== Test finished! ====\n")
 
 run_test()
