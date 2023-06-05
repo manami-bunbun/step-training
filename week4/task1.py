@@ -82,7 +82,8 @@ class Wikipedia:
         #------------------------#
         
         # find id from titles 
-        start_id, goal_id = None
+        start_id=None
+        goal_id = None
         for page_id, title in self.titles.items():
             if title == start:
                 start_id = page_id
@@ -134,7 +135,19 @@ class Wikipedia:
         #------------------------#
         # Write your code here!  #
         #------------------------#
-        pass
+        n = len(self.titles)
+        # give all nodes 1 as initial value
+        # if a node has no outlinks, give all nodes each 1/n
+        # if a node has outlinks, give neighbours 0.85*score/(number of outlinks) and  all nodes 0.15/n
+        
+        # initialize score
+        score = {}
+        for id in self.titles.keys():
+            score[id] = 1
+            
+        
+        
+            
 
 
     # Do something more interesting!!
@@ -151,7 +164,7 @@ if __name__ == "__main__":
     #     exit(1)
 
     # wikipedia = Wikipedia(sys.argv[1], sys.argv[2])
-    filesize = "medium"
+    filesize = "large"
     
     dir = Path(sys.argv[0]).parent.absolute()
     pages_file = Path.joinpath(dir, "wikipedia_dataset", f"pages_{filesize}.txt")
