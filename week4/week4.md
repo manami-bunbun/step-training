@@ -12,8 +12,9 @@ see `find_shortest_path()`s in [task1](https://github.com/manami-bunbun/step-tra
 
 ## Homework 2(p.100): 
 
-Calculate the pageranks and print the most important 10 pages. Write your code in find_most_popular_pages().
+Calculate the **pageranks** and print the most important 10 pages. Write your code in find_most_popular_pages().
 
+`def find_most_popular_pages(self):`
 
 
 ## Homework 3(p.101): 
