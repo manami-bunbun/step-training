@@ -82,7 +82,7 @@ class Wikipedia:
         #------------------------#
         
         # find id from titles 
-        start_id=None
+        start_id = None
         goal_id = None
         for page_id, title in self.titles.items():
             if title == start:
@@ -100,7 +100,8 @@ class Wikipedia:
         # queue for remembering the neighbors
         queue = deque()
         queue.append(start_id)
-        # history for remembering the distance and previous id to check shortest path and if visited
+        # history for remembering the distance and previous id 
+        # to check shortest path and if visited
         history = {}  # id: (distance, previous id)
         history[start_id] = (0, None)
 
@@ -130,20 +131,61 @@ class Wikipedia:
                 
 
 
-    # Calculate the page ranks and print the most popular pages.
-    def find_most_popular_pages(self):
-        #------------------------#
-        # Write your code here!  #
-        #------------------------#
-        n = len(self.titles)
-        # give all nodes 1 as initial value
-        # if a node has no outlinks, give all nodes each 1/n
-        # if a node has outlinks, give neighbours 0.85*score/(number of outlinks) and  all nodes 0.15/n
+    def calculate_page_rank(self):
+        # Initialize page scores
+        scores = {id: 1.0 for id in self.titles.keys()}
         
-        # initialize score
-        score = {}
-        for id in self.titles.keys():
-            score[id] = 1
+        total_nodes = len(scores)
+        main_rate = 0.85
+        convergence_threshold = 0.01
+        iteration_limit = 100
+        totalSum =total_nodes *1.0
+        delta = 0.0
+
+        for iteration in range(iteration_limit):
+            new_scores = {id: 0.0 for id in self.titles.keys()}
+            total_score = 0.0
+
+            for id in self.titles.keys():
+                outgoing_links = self.links.get(id, [])  # 出リンク
+
+            
+                score_forall = 0.0
+
+                if len(outgoing_links) == 0:
+                    score_forall = main_rate * scores[id] / total_nodes
+                else:
+                    adjusted_score = scores[id]* main_rate / len(outgoing_links) 
+                    for dst_id in outgoing_links:
+                        new_scores[dst_id] += adjusted_score
+                    score_forall = scores[id] *(1-main_rate) / total_nodes
+                    
+            for id in self.titles.keys():
+                new_scores[id] += score_forall
+                total_score += new_scores[id]
+                delta += abs(scores[id] - new_scores[id])
+            
+
+            #収束
+            if abs(delta) < convergence_threshold:
+                break
+            
+            scores = new_scores.copy()
+
+        return scores
+
+    def find_most_popular_pages(self):
+        page_ranks = self.calculate_page_rank()
+
+        # Sort the pages by their page rank in descending order
+        sorted_pages = sorted(page_ranks.items(), key=lambda x: x[1], reverse=True)
+
+        # Print the top 10 pages
+        for i, (page_id, rank) in enumerate(sorted_pages[:10]):
+            page_title = self.titles[page_id]
+            print(f"Rank {i+1}: {page_title} (Page ID: {page_id}, Page Rank: {rank: .10f})")
+
+
             
         
         
@@ -164,7 +206,7 @@ if __name__ == "__main__":
     #     exit(1)
 
     # wikipedia = Wikipedia(sys.argv[1], sys.argv[2])
-    filesize = "large"
+    filesize = "small"
     
     dir = Path(sys.argv[0]).parent.absolute()
     pages_file = Path.joinpath(dir, "wikipedia_dataset", f"pages_{filesize}.txt")
@@ -172,7 +214,7 @@ if __name__ == "__main__":
     wikipedia = Wikipedia(pages_file, links_file)
     wikipedia.find_longest_titles()
     wikipedia.find_most_linked_pages()
-    wikipedia.find_shortest_path("渋谷", "小野妹子")
-    # wikipedia.find_shortest_path('A', 'E')
+    # wikipedia.find_shortest_path("渋谷", "小野妹子")
+    wikipedia.find_shortest_path('A', 'E')
     wikipedia.find_most_popular_pages()
     
