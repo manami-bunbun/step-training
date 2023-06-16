@@ -82,7 +82,7 @@ def kruskal(cities, N):
                 return neighbors[next_city][i]
         return None
 
-    # 隣接行列の初期化
+    # 隣接リストの初期化
     neighbors = [[] for _ in range(N)]
     
     # Kruskalのアルゴリズムによりツアー構築
