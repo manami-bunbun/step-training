@@ -57,8 +57,6 @@ def distance(city1, city2):
 
 # https://qiita.com/flowerrr__lily/items/6679f9496d0079fa0dd2#%E3%82%AF%E3%83%A9%E3%82%B9%E3%82%AB%E3%83%AB%E6%B3%95
 def kruskal(cities, N):
-    # Union-Findデータ構造の初期化
-    uf = UnionFind(N)
     
     # Union-Findデータ構造の初期化
     uf = UnionFind(N)
