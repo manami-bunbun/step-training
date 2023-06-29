@@ -77,48 +77,82 @@ void my_initialize() {
 void *my_malloc(size_t size) {
   my_metadata_t *metadata = my_heap.free_head;
   my_metadata_t *prev = NULL;
-  my_metadata_t *worst_fit = NULL;
-  my_metadata_t *worst_fit_prev = NULL;
+  my_metadata_t *best_fit = NULL;
+  my_metadata_t *best_fit_prev = NULL;
   // First-fit: Find the first free slot the object fits.
   // TODO: Update this logic to Best-fit!
   while (metadata) {
-      if (metadata->size >= size && (!worst_fit || metadata->size > worst_fit->size)) {
-      worst_fit = metadata;
-      worst_fit_prev = prev;
-    }
+     if (metadata->size >= size && (!best_fit || metadata->size < best_fit->size)) {
+        best_fit = metadata;
+        best_fit_prev = prev;
+      }
     prev = metadata;
     metadata = metadata->next;
   }
+  // now, metadata points to the first free slot
+  // and prev is the previous entry.
+  metadata = best_fit;
+  prev = best_fit_prev;
 
-  // If no slot found, request more memory from the system.
-  if (!worst_fit) {
+  if (!metadata) {
+    // There was no free slot available. We need to request a new memory region
+    // from the system by calling mmap_from_system().
+    //
+    //     | metadata | free slot |
+    //     ^
+    //     metadata
+    //     <---------------------->
+    //            buffer_size
     size_t buffer_size = 4096;
     my_metadata_t *metadata = (my_metadata_t *)mmap_from_system(buffer_size);
     metadata->size = buffer_size - sizeof(my_metadata_t);
     metadata->next = NULL;
+    // Add the memory region to the free list.
     my_add_to_free_list(metadata);
+    // Now, try my_malloc() again. This should succeed.
     return my_malloc(size);
   }
 
-  void *ptr = worst_fit + 1;
-  size_t remaining_size = worst_fit->size - size;
-  my_remove_from_free_list(worst_fit, worst_fit_prev);
+  // |ptr| is the beginning of the allocated object.
+  //
+  // ... | metadata | object | ...
+  //     ^          ^
+  //     metadata   ptr
+  void *ptr = metadata + 1;
+  size_t remaining_size = metadata->size - size;
+  // Remove the free slot from the free list.
+  my_remove_from_free_list(metadata, prev);
 
   if (remaining_size > sizeof(my_metadata_t)) {
-    worst_fit->size = size;
+    // Shrink the metadata for the allocated object
+    // to separate the rest of the region corresponding to remaining_size.
+    // If the remaining_size is not large enough to make a new metadata,
+    // this code path will not be taken and the region will be managed
+    // as a part of the allocated object.
+    metadata->size = size;
+    // Create a new metadata for the remaining free slot.
+    //
+    // ... | metadata | object | metadata | free slot | ...
+    //     ^          ^        ^
+    //     metadata   ptr      new_metadata
+    //                 <------><---------------------->
+    //                   size       remaining size
     my_metadata_t *new_metadata = (my_metadata_t *)((char *)ptr + size);
     new_metadata->size = remaining_size - sizeof(my_metadata_t);
     new_metadata->next = NULL;
+    // Add the remaining free slot to the free list.
     my_add_to_free_list(new_metadata);
   }
-
-    return ptr;
+  return ptr;
 }
 
-
+const int BIN_SIZE_RANGE =128;
+const int BIN_COUNT=32;
+my_metadata_t *bins[BIN_COUNT];
 
 // This is called every time an object is freed.  You are not allowed to
 // use any library functions other than mmap_from_system / munmap_to_system.
+// 24998,4,14,2,449,3,161405,5,1196,5,
 void my_free(void *ptr) {
   // Look up the metadata. The metadata is placed just prior to the object.
   //
@@ -126,10 +160,12 @@ void my_free(void *ptr) {
   //     ^          ^
   //     metadata   ptr
   my_metadata_t *metadata = (my_metadata_t *)ptr - 1;
+  int bin_index = metadata->size / BIN_SIZE_RANGE;
+  if (bin_index >= BIN_COUNT) bin_index = BIN_COUNT - 1;
+  metadata->next = bins[bin_index];
+  bins[bin_index] = metadata;
   // Add the free slot to the free list.
-  my_add_to_free_list(metadata);
-
-  
+  // my_add_to_free_list(metadata);
 }
 
 // This is called at the end of each challenge.
