@@ -89,8 +89,12 @@ void *my_malloc(size_t size) {
     prev = metadata;
     metadata = metadata->next;
   }
+
   // now, metadata points to the first free slot
   // and prev is the previous entry.
+
+  metadata = best_fit;
+  prev = best_fit_prev;
 
   if (!metadata) {
     // There was no free slot available. We need to request a new memory region
